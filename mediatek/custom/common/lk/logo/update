@@ -1,0 +1,24 @@
+#!/bin/bash
+if [ "$1" = "" ]; then
+	echo "Please input resolution,"
+	echo "Such as: qvga, wqvga, wvga, hvga"
+	exit
+fi
+p=$1
+./tool/bmp_to_raw ./temp0.raw ./$p/"${p}_uboot".bmp
+./tool/bmp_to_raw ./temp1.raw ./$p/"${p}_charging".bmp
+./tool/bmp_to_raw ./temp2.raw ./$p/"${p}_charging_low_battery".bmp
+./tool/bmp_to_raw ./temp3.raw ./$p/"${p}_charger_ov".bmp
+./tool/bmp_to_raw ./temp4.raw ./$p/"${p}_charging_0".bmp
+./tool/bmp_to_raw ./temp5.raw ./$p/"${p}_charging_1".bmp
+./tool/bmp_to_raw ./temp6.raw ./$p/"${p}_charging_2".bmp
+./tool/bmp_to_raw ./temp7.raw ./$p/"${p}_charging_3".bmp
+./tool/bmp_to_raw ./temp8.raw ./$p/"${p}_charging_4".bmp
+./tool/bmp_to_raw ./temp9.raw ./$p/"${p}_charging_5".bmp
+./tool/bmp_to_raw ./temp10.raw ./$p/"${p}_charging_battery_broken".bmp
+./tool/bmp_to_raw ./temp11.raw ./$p/"${p}_charging_overheat_low_temperature".bmp
+chmod 666 ./boot_logo
+./tool/bmp_to_raw ./boot_logo ./$p/"${p}_kernel".bmp
+./tool/zpipe -l 9 ./"${p}.raw" temp0.raw temp1.raw temp2.raw temp3.raw temp4.raw temp5.raw temp6.raw temp7.raw temp8.raw temp9.raw temp10.raw temp11.raw
+rm -rf ./temp0.raw ./temp1.raw ./temp2.raw ./temp3.raw ./temp4.raw ./temp5.raw ./temp6.raw ./temp7.raw ./temp8.raw ./temp9.raw ./temp10.raw ./temp11.raw ./bootlogo.raw 
+echo "conversion finished"

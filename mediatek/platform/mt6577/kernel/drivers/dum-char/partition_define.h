@@ -1,0 +1,1 @@
+../../../../../custom/aa66/common/partition_define.h
