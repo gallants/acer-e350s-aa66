@@ -1,1 +1,0 @@
-../../../../kernel/drivers/video/lcd_reg.h
