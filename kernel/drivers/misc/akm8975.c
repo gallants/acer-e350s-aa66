@@ -222,7 +222,9 @@ static int akm_aot_release(struct inode *inode, struct file *file)
 	return 0;
 }
 
-static int akm_aot_ioctl(struct inode *inode, struct file *file,
+//static int akm_aot_ioctl(struct inode *inode, struct file *file,
+//	      unsigned int cmd, unsigned long arg)
+static int akm_aot_unlocked_ioctl(struct file *file,
 	      unsigned int cmd, unsigned long arg)
 {
 	void __user *argp = (void __user *) arg;
@@ -316,7 +318,9 @@ static int akmd_release(struct inode *inode, struct file *file)
 	return 0;
 }
 
-static int akmd_ioctl(struct inode *inode, struct file *file, unsigned int cmd,
+//static int akmd_ioctl(struct inode *inode, struct file *file, unsigned int cmd,
+//		      unsigned long arg)
+static int akmd_unlocked_ioctl(struct file *file, unsigned int cmd,
 		      unsigned long arg)
 {
 	void __user *argp = (void __user *) arg;
@@ -537,14 +541,16 @@ static const struct file_operations akmd_fops = {
 	.owner = THIS_MODULE,
 	.open = akmd_open,
 	.release = akmd_release,
-	.ioctl = akmd_ioctl,
+//	.ioctl = akmd_ioctl,
+	.unlocked_ioctl = akmd_unlocked_ioctl,
 };
 
 static const struct file_operations akm_aot_fops = {
 	.owner = THIS_MODULE,
 	.open = akm_aot_open,
 	.release = akm_aot_release,
-	.ioctl = akm_aot_ioctl,
+//	.ioctl = akm_aot_ioctl,
+	.unlocked_ioctl = akm_aot_unlocked_ioctl,
 };
 
 static struct miscdevice akm_aot_device = {

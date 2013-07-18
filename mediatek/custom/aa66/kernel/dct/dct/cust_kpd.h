@@ -59,14 +59,20 @@
 #define KPD_KEY_DEBOUNCE  1024      /* (val / 32) ms */
 #define KPD_PWRKEY_MAP    KEY_POWER
 
-
+#define KPD_PWRKEY_USE_EINT	KPD_YES
 /* HW keycode [0 ~ 71] -> Linux keycode */
 #define KPD_INIT_KEYMAP()	\
 {	\
-	[1] = KEY_VOLUMEUP,		\
-	[2] = KEY_VOLUMEDOWN,		\
-	[10] = KEY_CAMERA,		\
-	[11] = KEY_FOCUS,		\
+        [0] = KEY_VOLUMEDOWN,           \
+        [1] = KEY_VOLUMEUP,             \
+        [8] = KEY_POWER,                \
+        [17] = KEY_POWER,               \
+        [26] = KEY_POWER,               \
+        [35] = KEY_POWER,               \
+        [44] = KEY_POWER,               \
+        [53] = KEY_POWER,               \
+        [62] = KEY_POWER,               \
+        [71] = KEY_POWER,               \
 }	 
 /*****************************************************************/
 /*******************Preload Customation***************************/
@@ -77,23 +83,29 @@
 
 #define  KPD_DL_KEY1  8    /* KEY_POWER */
 #define KPD_DL_KEY2  1    /* KEY_VOLUMEUP */
-#define KPD_DL_KEY3  2    /* KEY_VOLUMEDOWN */
+#define KPD_DL_KEY3  0    /* KEY_VOLUMEDOWN */
 /*****************************************************************/
 /*******************Uboot Customation***************************/
 /*****************************************************************/
 #define MT65XX_RECOVERY_KEY  1    /* KEY_VOLUMEUP */
-#define MT65XX_FACTORY_KEY  2    /* KEY_VOLUMEDOWN */
+#define MT65XX_FACTORY_KEY  0    /* KEY_VOLUMEDOWN */
 /*****************************************************************/
 /*******************factory Customation***************************/
 /*****************************************************************/
 #define KEYS_PWRKEY_MAP		{ KEY_POWER, "Power" }
 #define DEFINE_KEYS_KEYMAP(x)		\
  struct key x[] = {	\
- 	KEYS_PWRKEY_MAP,		\
-{ KEY_VOLUMEUP,   "VLUp"  }, \
+        KEYS_PWRKEY_MAP,                \
 { KEY_VOLUMEDOWN,   "VLDown"  }, \
-{KEY_CAMERA,   "camera"  }, \
-{KEY_FOCUS,   "focus"  }, \
+{ KEY_VOLUMEUP,   "VLUp"  }, \
+{KEY_POWER,   "power"  }, \
+{KEY_POWER,   "power"  }, \
+{KEY_POWER,   "power"  }, \
+{KEY_POWER,   "power"  }, \
+{KEY_POWER,   "power"  }, \
+{KEY_POWER,   "power"  }, \
+{KEY_POWER,   "power"  }, \
+{KEY_POWER,   "power"  }, \
 }
 #define CUST_KEY_VOLUP  KEY_VOLUMEUP    
 #define CUST_KEY_VOLDOWN  KEY_VOLUMEDOWN    

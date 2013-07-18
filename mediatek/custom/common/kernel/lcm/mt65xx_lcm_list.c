@@ -38,6 +38,7 @@ extern LCM_DRIVER nt35510_6517_lcm_drv;
 extern LCM_DRIVER r63303_idisplay_lcm_drv;
 extern LCM_DRIVER hj080ia_lcm_drv;
 extern LCM_DRIVER otm9608_wvga_dsi_cmd_drv;
+extern LCM_DRIVER ips3p2620_qhd_nt35516_lcm_drv;
 
 #if defined(GN_SSD2825_SMD_S6E8AA)
 extern LCM_DRIVER gn_ssd2825_smd_s6e8aa;
@@ -225,6 +226,7 @@ LCM_DRIVER* lcm_driver_list[] =
 #if defined(OTM9608_WVGA_DSI_CMD)
 	&otm9608_wvga_dsi_cmd_drv,
 #endif
+	&ips3p2620_qhd_nt35516_lcm_drv,
 };
 
 #define LCM_COMPILE_ASSERT(condition) LCM_COMPILE_ASSERT_X(condition, __LINE__)

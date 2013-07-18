@@ -9,6 +9,7 @@
 
 
 #define AUXADC_HF_MIC_CHANNEL     1
+#define AUXADC_LCM_IDPIN_CHANNEL     2
 #define AUXADC_TEMPERATURE_CHANNEL     3
 
 

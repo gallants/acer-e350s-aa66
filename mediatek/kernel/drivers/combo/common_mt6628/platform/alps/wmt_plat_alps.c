@@ -892,7 +892,7 @@ wmt_plat_all_eint_ctrl (
 #endif
     return 0;
 }
-
+/*
 INT32 wmt_plat_uart_ctrl(ENUM_PIN_STATE state)
 {
     switch(state)
@@ -915,6 +915,36 @@ INT32 wmt_plat_uart_ctrl(ENUM_PIN_STATE state)
         WMT_DBG_FUNC("WMT-PLAT:UART deinit (out 0) \n");
         break;
 
+    default:
+        WMT_WARN_FUNC("WMT-PLAT:Warnning, invalid state(%d) on UART Group\n", state);
+        break;
+    }
+
+    return 0;
+}
+*/
+INT32 wmt_plat_uart_ctrl(ENUM_PIN_STATE state)
+{
+    switch(state)
+    {
+    case PIN_STA_MUX:
+    case PIN_STA_INIT:
+        mt_set_gpio_mode(GPIO_UART_URXD3_PIN, GPIO_UART_URXD3_PIN_M_URXD);
+        mt_set_gpio_mode(GPIO_UART_UTXD3_PIN, GPIO_UART_UTXD3_PIN_M_UTXD);
+        WMT_DBG_FUNC("WMT-PLAT:UART init (mode_01, uart) \n");
+        break;
+    case PIN_STA_IN_L:
+    case PIN_STA_DEINIT:
+        mt_set_gpio_mode(GPIO_UART_URXD3_PIN, GPIO_UART_URXD3_PIN_M_GPIO);
+        mt_set_gpio_dir(GPIO_UART_URXD3_PIN, GPIO_DIR_OUT);
+        mt_set_gpio_out(GPIO_UART_URXD3_PIN, GPIO_OUT_ZERO);
+
+        mt_set_gpio_mode(GPIO_UART_UTXD3_PIN, GPIO_UART_UTXD3_PIN_M_GPIO);
+        mt_set_gpio_dir(GPIO_UART_UTXD3_PIN, GPIO_DIR_OUT);
+        mt_set_gpio_out(GPIO_UART_UTXD3_PIN, GPIO_OUT_ZERO);
+        WMT_DBG_FUNC("WMT-PLAT:UART deinit (out 0) \n");
+        break;
+  
     default:
         WMT_WARN_FUNC("WMT-PLAT:Warnning, invalid state(%d) on UART Group\n", state);
         break;
