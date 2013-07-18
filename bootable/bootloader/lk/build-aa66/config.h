@@ -1,0 +1,44 @@
+#ifndef __CONFIG_H
+#define __CONFIG_H
+#define LK 1
+#define WITH_DEBUG_UART 1
+#define MEMBASE 0X01E00000
+#define SCRATCH_ADDR 0X2800000
+#define MACH_TYPE 6577
+#define HAVE_CACHE_PL310
+#define MTK_FASTBOOT_SUPPORT
+#define LK_PROFILING
+#define PERIPH_BLK_BLSP 1
+#define WITH_CPU_EARLY_INIT 0
+#define WITH_CPU_WARM_BOOT 0
+#define MMC_SLOT 1
+#define ARM_CPU_CORTEX_A9 1
+#define ARM_WITH_CP15 1
+#define ARM_WITH_MMU 1
+#define ARM_ISA_ARMV7 1
+#define ARM_WITH_VFP 1
+#define ARM_WITH_NEON 1
+#define ARM_WITH_THUMB 1
+#define ARM_WITH_THUMB2 1
+#define ARM_WITH_CACHE 1
+#define ARM_WITH_L2 1
+#define BOARD AA66
+#define PROJECT_AA66 1
+#define TARGET_MEDIATEK 1
+#define PLATFORM_MEDIATEK 1
+#define ARCH_ARM 1
+#define WITH_APP_MT_BOOT 1
+#define WITH_APP_SHELL 1
+#define WITH_CUSTOM_AA66_LK 1
+#define WITH_DEV_KEYS 1
+#define WITH_DEV_VIDEO 1
+#define WITH_LIB_CONSOLE 1
+#define WITH_LIB_DEBUG 1
+#define WITH_LIB_HEAP 1
+#define WITH_LIB_LIBC 1
+#define WITH_LIB_OPENSSL 1
+#define WITH_LIB_OPENSSL_CRYPTO 1
+#define WITH_LIB_PTABLE 1
+#define WITH_LIB_ZLIB 1
+#define DEBUG 0
+#endif
