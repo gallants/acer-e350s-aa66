@@ -16,6 +16,7 @@ extern int mtkfb_set_backlight_pwm(int div);
 
 unsigned int brightness_mapping(unsigned int level)
 {
+/*
 	if(level ==1 )return 999;
     
 	if(level>=20 && level<=255) { 
@@ -37,6 +38,10 @@ unsigned int brightness_mapping(unsigned int level)
 	}
 #endif	
 	return ERROR_BL_LEVEL;
+*/
+        unsigned int mapped_level;
+        mapped_level = level/4;
+        return mapped_level;
 }
 
 unsigned int Cust_SetBacklight(int level, int div)
@@ -57,7 +62,8 @@ static struct cust_mt65xx_led cust_led_list_pvt[MT65XX_LED_TYPE_TOTAL] = {
 	{"keyboard-backlight",MT65XX_LED_MODE_NONE, -1,{0}},
 	{"button-backlight",  MT65XX_LED_MODE_PMIC, MT65XX_LED_PMIC_BUTTON,{0}},
 	//{"lcd-backlight",     MT65XX_LED_MODE_CUST, (int)Cust_SetBacklight,{0}},
-	{"lcd-backlight",     MT65XX_LED_MODE_PMIC, MT65XX_LED_PMIC_LCD_BOOST,{0}},
+	//{"lcd-backlight",     MT65XX_LED_MODE_PMIC, MT65XX_LED_PMIC_LCD_BOOST,{0}},
+	{"lcd-backlight",     MT65XX_LED_MODE_PWM, PWM1,{PWM_CLK_NEW_MODE_BLOCK,CLK_DIV1,24,24}},
 };
 
 static struct cust_mt65xx_led cust_led_list_dvt[MT65XX_LED_TYPE_TOTAL] = {
@@ -71,7 +77,8 @@ static struct cust_mt65xx_led cust_led_list_dvt[MT65XX_LED_TYPE_TOTAL] = {
 	{"keyboard-backlight",MT65XX_LED_MODE_NONE, -1,{0}},
 	{"button-backlight",  MT65XX_LED_MODE_PMIC, MT65XX_LED_PMIC_BUTTON,{0}},
 	//{"lcd-backlight",     MT65XX_LED_MODE_CUST, (int)Cust_SetBacklight,{0}},
-	{"lcd-backlight",     MT65XX_LED_MODE_PMIC, MT65XX_LED_PMIC_LCD_BOOST,{0}},
+	//{"lcd-backlight",     MT65XX_LED_MODE_PMIC, MT65XX_LED_PMIC_LCD_BOOST,{0}},
+	{"lcd-backlight",     MT65XX_LED_MODE_PWM, PWM1,{PWM_CLK_NEW_MODE_BLOCK,CLK_DIV1,24,24}},
 };
 extern unsigned int HWID;
 

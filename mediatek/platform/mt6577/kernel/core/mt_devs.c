@@ -1390,7 +1390,7 @@ __init int mt_board_init(void)
         retval = platform_device_register(&emd_chr_devs[i]);
         if (retval != 0){
             printk("[emd] Regsiter emd_char_device %d failed\n", i);
-            return retval;
+//            return retval;
         }
     }
 #endif
@@ -1399,7 +1399,7 @@ __init int mt_board_init(void)
     for (i = 0; i < ARRAY_SIZE(mtk_device_uart); i++){
         retval = platform_device_register(&mtk_device_uart[i]);
         if (retval != 0){
-            return retval;
+//            return retval;
         }
     }
 #endif
@@ -1407,7 +1407,7 @@ __init int mt_board_init(void)
 #ifdef CONFIG_FIQ_DEBUGGER
 	retval = platform_device_register(&mt_fiq_debugger);
 	if (retval != 0){
-		return retval;
+//		return retval;
 	}
 #endif
 
@@ -1434,19 +1434,19 @@ __init int mt_board_init(void)
     retval = platform_device_register(&mtk_nand_dev);
     if (retval != 0) {
         printk(KERN_ERR "register nand device fail\n");
-        return retval;
+//        return retval;
     }
 #endif
 //		printk(KERN_ALERT"[GPIO]%5d<%s> Register gpio devices\n", __LINE__, __func__);
 	retval = platform_device_register(&gpio_dev);
 	if (retval != 0){
-		return retval;
+//		return retval;
 	}
 
 #if defined(CONFIG_KEYBOARD_HID)
 	retval = platform_device_register(&mt_hid_dev);
 	if (retval != 0){
-		return retval;
+//		return retval;
 	}
 #endif
 
@@ -1457,7 +1457,7 @@ __init int mt_board_init(void)
 		for (i = 0; i < ARRAY_SIZE(mt_device_i2c); i++){
 			retval = platform_device_register(&mt_device_i2c[i]);
 			if (retval != 0){
-				return retval;
+//				return retval;
 			}
 		}
 #endif
@@ -1466,7 +1466,7 @@ __init int mt_board_init(void)
         retval = platform_device_register(&mt_device_sd[i]);
 			if (retval != 0){
 				printk("[%s]: failed to register mt_device_sd[%d]\n", __func__, i);
-				return retval;
+//				return retval;
 			}
 			printk("[%s]: successed to register mt_device_sd[%d]\n", __func__, i);
 		}
@@ -1476,7 +1476,7 @@ __init int mt_board_init(void)
     retval = platform_device_register(&AudDrv_device);
     printk("AudDrv_driver_device \n!");
     if (retval != 0){
-       return retval;
+//       return retval;
     }
 #endif
 
@@ -1533,20 +1533,20 @@ __init int mt_board_init(void)
 
     retval = platform_device_register(&mt_device_fb);
     if (retval != 0) {
-         return retval;
+//         return retval;
     }
 #endif
 
 #if defined(CONFIG_MTK_LEDS)
 	retval = platform_device_register(&mt65xx_leds_device);
-	if (retval != 0)
-		return retval;
+//	if (retval != 0)
+//		return retval;
 	printk("bei:device LEDS register\n");
 #endif
 #ifdef MTK_HDMI_SUPPORT
 	retval = platform_device_register(&mtk_hdmi_dev);
 	if (retval != 0){
-		return retval;
+//		return retval;
 	}
 
 #endif
@@ -1560,14 +1560,14 @@ __init int mt_board_init(void)
     retval = platform_device_register(&mtk_mau_dev);
     printk("register MTK_MAU device\n");
     if (retval != 0) {
-        return retval;
+//        return retval;
     }
 
 #if defined(MTK_TVOUT_SUPPORT)
     retval = platform_device_register(&mt_TVOUT_dev);
 	printk("register TV-out device\n");
     if (retval != 0) {
-         return retval;
+//         return retval;
     }
 #endif
 
@@ -1576,7 +1576,7 @@ __init int mt_board_init(void)
   if(retval != 0)
   {
      printk("****[mt6577_auxadc_driver] Unable to device register(%d)\n", retval);
-	 return retval;
+//	 return retval;
   }
 #endif
 
@@ -1589,7 +1589,7 @@ __init int mt_board_init(void)
 	if (retval != 0)
 	{
 		printk("platform_device_accdet_register error:(%d)\n", retval);
-		return retval;
+//		return retval;
 	}
 	else
 	{
@@ -1602,7 +1602,7 @@ __init int mt_board_init(void)
     //printk("[MDP]platform_device_register\n\r");
     retval = platform_device_register(&mt_MDP_dev);
     if(retval != 0){
-        return retval;
+        //return retval;
     }
 #endif
 
@@ -1610,59 +1610,59 @@ __init int mt_board_init(void)
     retval = platform_device_register(&mt_SMI_dev);
     if(retval != 0){
     	  printk("****[mt_SMI_dev] Unable to device register(%d)\n", retval);
-        return retval;
+        //return retval;
     }
 #endif
 
 
 
 
-#if defined(MTK_SENSOR_SUPPORT)
+#if 1 //defined(MTK_SENSOR_SUPPORT)
 
 	retval = platform_device_register(&hwmon_sensor);
 	printk("hwmon_sensor device!");
-	if (retval != 0)
-		return retval;
+	//if (retval != 0)
+	//	return retval;
 
-#if defined(CUSTOM_KERNEL_ACCELEROMETER)
+#if 1 //defined(CUSTOM_KERNEL_ACCELEROMETER)
 	retval = platform_device_register(&sensor_gsensor);
 		printk("sensor_gsensor device!");
-	if (retval != 0)
-		return retval;
+	//if (retval != 0)
+	//	return retval;
 #endif
 
-#if defined(CUSTOM_KERNEL_MAGNETOMETER)
+#if 1 //defined(CUSTOM_KERNEL_MAGNETOMETER)
 	retval = platform_device_register(&sensor_msensor);
 		printk("sensor_msensor device!");
-	if (retval != 0)
-		return retval;
+	//if (retval != 0)
+	//	return retval;
 
 	retval = platform_device_register(&sensor_orientation);
 		printk("sensor_osensor device!");
-	if (retval != 0)
-		return retval;
+	//if (retval != 0)
+	//	return retval;
 
 #endif
 
 #if defined(CUSTOM_KERNEL_GYROSCOPE)
 	retval = platform_device_register(&sensor_gyroscope);
 		printk("sensor_gyroscope device!");
-	if (retval != 0)
-		return retval;
+	//if (retval != 0)
+	//	return retval;
 #endif
 
 #if defined(CUSTOM_KERNEL_BAROMETER)
 	retval = platform_device_register(&sensor_barometer);
 		printk("sensor_barometer device!");
-	if (retval != 0)
-		return retval;
+	//if (retval != 0)
+	//	return retval;
 #endif
 
-#if defined(CUSTOM_KERNEL_ALSPS)
+#if 1 //defined(CUSTOM_KERNEL_ALSPS)
 	retval = platform_device_register(&sensor_alsps);
 		printk("sensor_alsps device!");
-	if (retval != 0)
-		return retval;
+	//if (retval != 0)
+	//	return retval;
 #endif
 #endif
 
@@ -1671,7 +1671,7 @@ __init int mt_board_init(void)
 	retval = platform_device_register(&mt_usb11_dev);
 	if (retval != 0){
 		printk("register musbfsh device fail!\n");
-		return retval;
+	//	return retval;
 	}
 #endif
 
@@ -1680,39 +1680,39 @@ __init int mt_board_init(void)
 	retval = platform_device_register(&mt_device_usb);
 	if (retval != 0){
 	printk("mt_device_usb register fail\n");
-        return retval;
+//        return retval;
 	}
 #endif
 
 #ifdef CONFIG_MTK_KEYPAD
 	retval = platform_device_register(&kpd_pdev);
 	if (retval != 0) {
-		return retval;
+//		return retval;
 	}
 #endif
 #ifdef CONFIG_MOUSE_PANASONIC_EVQWJN
 	retval = platform_device_register(&jbd_pdev);
 	if (retval != 0) {
-		return retval;
+//		return retval;
 	}
 #endif
 #if defined(CONFIG_MTK_TOUCHPANEL)
     retval = platform_device_register(&mtk_tpd_dev);
     if (retval != 0) {
-        return retval;
+//        return retval;
     }
 #endif
 #if defined(CUSTOM_KERNEL_OFN)
     retval = platform_device_register(&ofn_driver);
     if (retval != 0){
-        return retval;
+//        return retval;
     }
 #endif
 
 #if (defined(CONFIG_MTK_MTD_NAND) ||defined(CONFIG_MTK_MMC))
 retval = platform_device_register(&dummychar_device);
 	if (retval != 0){
-		return retval;
+//		return retval;
 	}
 #endif
 
@@ -1724,7 +1724,7 @@ retval = platform_device_register(&dummychar_device);
 
     retval = platform_device_register(&pmem_multimedia_device);
     if (retval != 0){
-       return retval;
+//       return retval;
     }
 #endif
 
@@ -1736,21 +1736,21 @@ retval = platform_device_register(&dummychar_device);
     retval = platform_device_register(&vmem_multimedia_device);
     if (retval != 0){
 	printk("vmem platform register failed\n");
-       return retval;
+//       return retval;
     }
 #endif
 
 #ifdef CONFIG_CPU_FREQ
     retval = platform_device_register(&cpufreq_pdev);
     if (retval != 0) {
-        return retval;
+//        return retval;
     }
 #endif
 
 #if 1
     retval = platform_device_register(&thermal_pdev);
     if (retval != 0) {
-        return retval;
+//        return retval;
     }
 #endif
 
@@ -1761,7 +1761,7 @@ retval = platform_device_register(&dummychar_device);
 #if 1 ///defined(CONFIG_VIDEO_CAPTURE_DRIVERS)
     retval = platform_device_register(&sensor_dev);
     if (retval != 0){
-    	return retval;
+//    	return retval;
     }
 #endif
 //
@@ -1771,48 +1771,48 @@ retval = platform_device_register(&dummychar_device);
 #if 1  //defined(CONFIG_ACTUATOR)
     retval = platform_device_register(&actuator_dev);
     if (retval != 0){
-        return retval;
+//        return retval;
     }
 #endif
 //
 #if 1 //defined(CONFIG_ISP_MT6577)
     retval = platform_device_register(&mt_isp_dev);
     if (retval != 0){
-        return retval;
+//        return retval;
     }
 #endif
 
 #if 1
     retval = platform_device_register(&mt_eis_dev);
     if (retval != 0){
-        return retval;
+//        return retval;
     }
 #endif
 
 #ifdef CONFIG_RFKILL
     retval = platform_device_register(&mt_device_rfkill);
     if (retval != 0){
-        return retval;
+//        return retval;
     }
 #endif
 
 #if 1
 	retval = platform_device_register(&mt_SYSRAM_dev);
 	if (retval != 0){
-		return retval;
+//		return retval;
 	}
 #endif
 
 #if defined(CONFIG_MTK_GPS)
 	retval = platform_device_register(&mt3326_device_gps);
 	if (retval != 0){
-		return retval;
+//		return retval;
 	}
 #endif
 
 	retval = platform_device_register(&res_mgr_dev);
 	if (retval != 0){
-		return retval;
+//		return retval;
 	}
 
 	//[---del by Rachel, 2012.10.10---]

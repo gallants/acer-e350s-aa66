@@ -73,7 +73,8 @@ static int s4FM50AF_WriteReg(u16 a_u2Data)
 {
     int  i4RetValue = 0;
 
-    char puSendCmd[2] = {(char)(a_u2Data >> 4) , (char)(((a_u2Data & 0xF) << 4)+g_sr)};
+    //char puSendCmd[2] = {(char)(a_u2Data >> 4) , (char)(((a_u2Data & 0xF) << 4)+g_sr)};
+    char puSendCmd[2] = {(char)(((a_u2Data >> 8) & 0x03) | 0xC0), (char)(a_u2Data & 0xFF)};
 
     //FM50AFDB("[FM50AF] g_sr %d, write %d \n", g_sr, a_u2Data);
     i4RetValue = i2c_master_send(g_pstFM50AF_I2Cclient, puSendCmd, 2);
