@@ -8,8 +8,8 @@ make TARGET_PRODUCT=aa66 MTK_ROOT_CUSTOM=../mediatek/custom all
 
 == Not Working!! ==
 
-1. all sensors
-2. camera
-3. flashlight
-4. stand-by backlight
+1. als/ps sensor [cm3625]
+2. camera [imgsensor]
+3. /dev/block/mmcblk1p1 disapears after reboot serval times
+4. gsm/wcdma signal not stable
 

@@ -33,65 +33,60 @@
  * applicable license agreements with MediaTek Inc.
  */
 
-#ifndef _CUST_LEDS_H
-#define _CUST_LEDS_H
+#include <cust_leds.h>
+#include <mach/mt_pwm.h>
 
-enum mt65xx_led_type
+#include <linux/kernel.h>
+#include <mach/pmic_mt6329_hw_bank1.h> 
+#include <mach/pmic_mt6329_sw_bank1.h> 
+#include <mach/pmic_mt6329_hw.h>
+#include <mach/pmic_mt6329_sw.h>
+#include <mach/upmu_common_sw.h>
+#include <mach/upmu_hw.h>
+
+extern int mtkfb_set_backlight_level(unsigned int level);
+extern int mtkfb_set_backlight_pwm(int div);
+
+unsigned int brightness_mapping(unsigned int level)
 {
-	MT65XX_LED_TYPE_RED = 0,
-	MT65XX_LED_TYPE_GREEN,
-	MT65XX_LED_TYPE_BLUE,
-	MT65XX_LED_TYPE_JOGBALL,
-	MT65XX_LED_TYPE_KEYBOARD,
-	MT65XX_LED_TYPE_BUTTON,	
-	MT65XX_LED_TYPE_LCD,
-	MT65XX_LED_TYPE_TOTAL,
-};
-
-enum mt65xx_led_mode
-{
-	MT65XX_LED_MODE_NONE,
-	MT65XX_LED_MODE_PWM,
-	MT65XX_LED_MODE_GPIO,
-	MT65XX_LED_MODE_PMIC,
-	MT65XX_LED_MODE_CUST
-};
-
-enum mt65xx_led_pmic
-{
-	MT65XX_LED_PMIC_BUTTON=0,
-	MT65XX_LED_PMIC_LCD,
-	MT65XX_LED_PMIC_LCD_ISINK,
-	MT65XX_LED_PMIC_LCD_BOOST,
-	MT65XX_LED_PMIC_NLED_ISINK4,
-	MT65XX_LED_PMIC_NLED_ISINK5
-};
-struct PWM_config
-{
-	int clock_source;
-	int div;
-	int low_duration;
-	int High_duration;
-};
-typedef int (*cust_brightness_set)(int level, int div);
-
-/*
- * name : must the same as lights HAL
- * mode : control mode
- * data :
- *    PWM:  pwm number
- *    GPIO: gpio id
- *    PMIC: enum mt65xx_led_pmic
- *    CUST: custom set brightness function pointer
-*/
-struct cust_mt65xx_led {
-	char                 *name;
-	enum mt65xx_led_mode  mode;
-	int                   data;
- struct PWM_config config_data;
-};
-
-extern struct cust_mt65xx_led *get_cust_led_list(void);
-
+    unsigned int mapped_level;
+/*    
+#if defined(PHILIPS_ATLAS)
+	mapped_level = level;
+#elif defined(SIMCOM_I5000) //amy0504 
+    mapped_level = level/6;
+#elif defined(ACER_C8)
+    //mapped_level = (level*100)/455;
+    mapped_level = level/4;
+#else
+    mapped_level = level/4;
 #endif
+*/       
+    mapped_level = level/4;
+	return mapped_level;
+}
+
+unsigned int Cust_SetBacklight(int level, int div)
+{
+    mtkfb_set_backlight_pwm(div);
+    mtkfb_set_backlight_level(brightness_mapping(level));
+    return 0;
+}
+
+static struct cust_mt65xx_led cust_led_list[MT65XX_LED_TYPE_TOTAL] = {
+	{"red",               MT65XX_LED_MODE_PMIC, MT65XX_LED_PMIC_NLED_ISINK4},
+	{"green",             MT65XX_LED_MODE_PMIC, MT65XX_LED_PMIC_NLED_ISINK5},
+	{"blue",              MT65XX_LED_MODE_NONE, -1,{0}},
+	{"jogball-backlight", MT65XX_LED_MODE_NONE, -1,{0}},
+	{"keyboard-backlight",MT65XX_LED_MODE_NONE, -1,{0}},
+	//{"button-backlight",  MT65XX_LED_MODE_PMIC, MT65XX_LED_PMIC_BUTTON,{0}},
+	{"button-backlight",  MT65XX_LED_MODE_PMIC,  -1,{0}},
+	/*punk,pwm clk 100Hz -> 30k*/
+	{"lcd-backlight",     MT65XX_LED_MODE_PWM, PWM1,{PWM_CLK_NEW_MODE_BLOCK,CLK_DIV1,24,24}}, 
+};
+
+struct cust_mt65xx_led *get_cust_led_list(void)
+{
+	return cust_led_list;
+}
 

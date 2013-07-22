@@ -6,8 +6,8 @@
  * Without the prior written permission of MediaTek inc. and/or its licensors,
  * any reproduction, modification, use or disclosure of MediaTek Software,
  * and information contained herein, in whole or in part, shall be strictly prohibited.
- */
-/* MediaTek Inc. (C) 2010. All rights reserved.
+ *
+ * MediaTek Inc. (C) 2010. All rights reserved.
  *
  * BY OPENING THIS FILE, RECEIVER HEREBY UNEQUIVOCALLY ACKNOWLEDGES AND AGREES
  * THAT THE SOFTWARE/FIRMWARE AND ITS DOCUMENTATIONS ("MEDIATEK SOFTWARE")
@@ -32,66 +32,4 @@
  * have been modified by MediaTek Inc. All revisions are subject to any receiver's
  * applicable license agreements with MediaTek Inc.
  */
-
-#ifndef _CUST_LEDS_H
-#define _CUST_LEDS_H
-
-enum mt65xx_led_type
-{
-	MT65XX_LED_TYPE_RED = 0,
-	MT65XX_LED_TYPE_GREEN,
-	MT65XX_LED_TYPE_BLUE,
-	MT65XX_LED_TYPE_JOGBALL,
-	MT65XX_LED_TYPE_KEYBOARD,
-	MT65XX_LED_TYPE_BUTTON,	
-	MT65XX_LED_TYPE_LCD,
-	MT65XX_LED_TYPE_TOTAL,
-};
-
-enum mt65xx_led_mode
-{
-	MT65XX_LED_MODE_NONE,
-	MT65XX_LED_MODE_PWM,
-	MT65XX_LED_MODE_GPIO,
-	MT65XX_LED_MODE_PMIC,
-	MT65XX_LED_MODE_CUST
-};
-
-enum mt65xx_led_pmic
-{
-	MT65XX_LED_PMIC_BUTTON=0,
-	MT65XX_LED_PMIC_LCD,
-	MT65XX_LED_PMIC_LCD_ISINK,
-	MT65XX_LED_PMIC_LCD_BOOST,
-	MT65XX_LED_PMIC_NLED_ISINK4,
-	MT65XX_LED_PMIC_NLED_ISINK5
-};
-struct PWM_config
-{
-	int clock_source;
-	int div;
-	int low_duration;
-	int High_duration;
-};
-typedef int (*cust_brightness_set)(int level, int div);
-
-/*
- * name : must the same as lights HAL
- * mode : control mode
- * data :
- *    PWM:  pwm number
- *    GPIO: gpio id
- *    PMIC: enum mt65xx_led_pmic
- *    CUST: custom set brightness function pointer
-*/
-struct cust_mt65xx_led {
-	char                 *name;
-	enum mt65xx_led_mode  mode;
-	int                   data;
- struct PWM_config config_data;
-};
-
-extern struct cust_mt65xx_led *get_cust_led_list(void);
-
-#endif
 
