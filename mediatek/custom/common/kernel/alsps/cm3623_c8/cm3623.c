@@ -899,7 +899,7 @@ static int cm3623_init_client(struct i2c_client *client)
 	if((err = cm3623_setup_eint(client)))
 	{
 		APS_ERR("setup eint: %d\n", err);
-		return err;
+//		return err;
 	}
 	if (mt_get_gpio_in(GPIO_ALS_EINT_PIN) == 0) 
 	{
@@ -918,7 +918,7 @@ static int cm3623_init_client(struct i2c_client *client)
 		}
 	}
 
-	if (0)//((err = cm3623_check_and_clear_intr(client)))
+	if ((err = cm3623_check_and_clear_intr(client)))
 	{
 		APS_ERR("check/clear intr: %d\n", err);
 		//    return err;
@@ -930,6 +930,7 @@ static int cm3623_init_client(struct i2c_client *client)
 		APS_ERR("init dev: %d\n", err);
 		return err;
 	}
+	
 	if((err = cm3623_write_als(client, atomic_read(&obj->als_cmd_val))))
 	{
 		APS_ERR("write als: %d\n", err);

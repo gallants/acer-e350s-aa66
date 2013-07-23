@@ -120,13 +120,14 @@ static int s4FM50AF_ReadReg(unsigned short * a_pu2Result)
 static int s4FM50AF_WriteReg(u16 a_u2Data)
 {
     int  i4RetValue = 0;
+/*
 #if defined(ACER_C8)||defined(SIMCOM_I6000)
-	/*driver ic is BU6424*/
-    char puSendCmd[2] = {(char)(((a_u2Data >> 8) & 0x03) | 0xC0), (char)(a_u2Data & 0xFF)};
+	// driver ic is BU6424
 #else
     char puSendCmd[2] = {(char)(a_u2Data >> 4) , (char)(((a_u2Data & 0xF) << 4)+0xF)};
 #endif
-
+*/
+    char puSendCmd[2] = {(char)(((a_u2Data >> 8) & 0x03) | 0xC0), (char)(a_u2Data & 0xFF)};
 	//mt_set_gpio_out(97,1);
     i4RetValue = i2c_master_send(g_pstFM50AF_I2Cclient, puSendCmd, 2);
 	//mt_set_gpio_out(97,0);
