@@ -21,7 +21,7 @@ bool          bIsMotorMoving;
 //Motor Open?
 bool          bIsMotorOpen;
 //Support SR?
-bool          bIsSupportSR;
+//bool          bIsSupportSR;
 } stFM50AF_MotorInfo;
 
 //Control commnad

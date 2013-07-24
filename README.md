@@ -6,10 +6,6 @@ cd kernel
 ./build aa66 clean   
 make TARGET_PRODUCT=aa66 MTK_ROOT_CUSTOM=../mediatek/custom all
 
-== Not Working!! ==
+== All Working!! ==
 
-1. als/ps sensor [cm3625]
-2. camera [imgsensor]
-3. /dev/block/mmcblk1p1 disapears after reboot serval times
-4. gsm/wcdma signal not stable
-
+** But Camera Sensors and AF Lens are not stock driver

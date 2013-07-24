@@ -2,7 +2,7 @@
 #define __CUST_ALSPS_H__
 
 #define C_CUST_ALS_LEVEL    16
-#define C_CUST_I2C_ADDR_NUM 1
+#define C_CUST_I2C_ADDR_NUM 4
 
 struct alsps_hw {
     int i2c_num;                                    /*!< the i2c bus used by ALS/PS */

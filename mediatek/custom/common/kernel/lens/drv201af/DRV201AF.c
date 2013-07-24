@@ -21,7 +21,7 @@
 
 
 #define DRV201AF_DRVNAME "DRV201AF"
-#define DRV201AF_VCM_WRITE_ID           0x1C
+#define DRV201AF_VCM_WRITE_ID           0x18 //0x1C
 
 #define DRV201AF_DEBUG
 #ifdef DRV201AF_DEBUG

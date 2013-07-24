@@ -55,7 +55,7 @@
 //#include <mach/mt6573_gpio.h>
 
 
-#define MT9P017AF_DRVNAME "MT9P017AF"
+#define MT9P017AF_DRVNAME  "MT9P017AF"
 #define MT9P017AF_VCM_WRITE_ID           0x18
 
 #define MT9P017AF_DEBUG
@@ -97,11 +97,16 @@ static unsigned long g_u4CurrPosition   = 0;
 extern s32 mt_set_gpio_mode(u32 u4Pin, u32 u4Mode);
 extern s32 mt_set_gpio_out(u32 u4Pin, u32 u4PinOut);
 extern s32 mt_set_gpio_dir(u32 u4Pin, u32 u4Dir);
-
+/*
 extern void MT9P017MIPI_write_cmos_sensor(kal_uint32 addr, kal_uint32 para);
 extern kal_uint16 MT9P017MIPI_read_cmos_sensor(kal_uint32 addr);
 
 extern void MT9P017_write_cmos_sensor(kal_uint32 addr, kal_uint32 para);//LK@I3000
+*/
+extern void OV5647_write_cmos_sensor(kal_uint32 addr, kal_uint32 para);
+extern kal_uint16 OV5647_read_cmos_sensor(kal_uint32 addr);
+
+extern void OV5647_write_cmos_sensor(kal_uint32 addr, kal_uint32 para);//LK@I3000
 
 static int s4MT9P017AF_ReadReg(unsigned short * a_pu2Result)
 {
@@ -140,11 +145,14 @@ static int s4MT9P017AF_WriteReg(u16 a_u2Data)
 	a_u2Data = a_u2Data >>2;
         if(a_u2Data == 0)//LK@add to reduce AF noise
 		return 0;
+/*
 #if defined(MT9P017_MIPI_RAW)
 	MT9P017MIPI_write_cmos_sensor(0x30f2,a_u2Data);
 #else
 	MT9P017_write_cmos_sensor(0x30f2,a_u2Data);//LK@I3000
 #endif
+*/
+	OV5647_write_cmos_sensor(0x30f2,a_u2Data);//LK@I3000
        MT9P017AFDB("[MT9P017AF] I2C send !! \n");
 
 	
@@ -349,12 +357,14 @@ static void MT9P017AF_ISR(UINT16 a_input)
 //CAM_RESET
 static int MT9P017AF_Open(struct inode * a_pstInode, struct file * a_pstFile)
 {
+/*
 #if defined(MT9P017_MIPI_RAW)
     MT9P017MIPI_write_cmos_sensor(0x30f0,0x8000);
 #else
     MT9P017_write_cmos_sensor(0x30f0,0x8000);
 #endif
-
+*/
+    OV5647_write_cmos_sensor(0x30f0,0x8000);
     spin_lock(&g_MT9P017AF_SpinLock);
 
     if(g_s4MT9P017AF_Opened)
@@ -521,6 +531,7 @@ static struct i2c_driver MT9P017AF_i2c_driver = {
 //static int MT9P017AF_i2c_detect(struct i2c_client *client, int kind, struct i2c_board_info *info);
 static int MT9P017AF_i2c_probe(struct i2c_client *client, const struct i2c_device_id *id);
 static int MT9P017AF_i2c_remove(struct i2c_client *client);
+static struct i2c_board_info __initdata kd_lens_dev={ I2C_BOARD_INFO("MT9P017AF", MT9P017AF_VCM_WRITE_ID>>1)};
 static const struct i2c_device_id MT9P017AF_i2c_id[] = {{MT9P017AF_DRVNAME,0},{}};   
 //static unsigned short force[] = {IMG_SENSOR_I2C_GROUP_ID, MT9P017AF_VCM_WRITE_ID, I2C_CLIENT_END, I2C_CLIENT_END};   
 //static const unsigned short * const forces[] = { force, NULL };              
@@ -673,17 +684,21 @@ static struct platform_driver g_stMT9P017AF_Driver = {
     .suspend	= MT9P017AF_suspend,
     .resume	= MT9P017AF_resume,
     .driver		= {
+/*
 #if 1//defined(ACER_C8)
         .name	= "lens_actuator0",
 #else
         .name	= "lens_actuator",
 #endif
+*/
+        .name	= "lens_actuator",
         .owner	= THIS_MODULE,
     }
 };
 
 static int __init MT9P017AF_i2C_init(void)
 {
+    i2c_register_board_info(IMG_SENSOR_I2C_GROUP_ID, &kd_lens_dev, 1);
     if(platform_driver_register(&g_stMT9P017AF_Driver)){
         MT9P017AFDB("failed to register MT9P017AF driver\n");
         return -ENODEV;

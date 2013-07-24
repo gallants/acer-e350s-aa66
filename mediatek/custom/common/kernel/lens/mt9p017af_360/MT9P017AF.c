@@ -63,8 +63,8 @@ extern s32 mt_set_gpio_mode(u32 u4Pin, u32 u4Mode);
 extern s32 mt_set_gpio_out(u32 u4Pin, u32 u4PinOut);
 extern s32 mt_set_gpio_dir(u32 u4Pin, u32 u4Dir);
 
-extern void MT9P017MIPI_write_cmos_sensor(kal_uint32 addr, kal_uint32 para);
-extern kal_uint16 MT9P017MIPI_read_cmos_sensor(kal_uint32 addr);
+extern void MT9P017_write_cmos_sensor(kal_uint32 addr, kal_uint32 para);
+extern kal_uint16 MT9P017_read_cmos_sensor(kal_uint32 addr);
 
 
 static int s4MT9P017AF_ReadReg(unsigned short * a_pu2Result)
@@ -80,7 +80,7 @@ static int s4MT9P017AF_ReadReg(unsigned short * a_pu2Result)
         return -1;
     }*/
 
-    *a_pu2Result = MT9P017MIPI_read_cmos_sensor(0x30f2)<<2;
+    *a_pu2Result = MT9P017_read_cmos_sensor(0x30f2)<<2;
 
     return 0;
 }
@@ -105,7 +105,7 @@ static int s4MT9P017AF_WriteReg(u16 a_u2Data)
   
 	a_u2Data = a_u2Data >>2;
 	
-	MT9P017MIPI_write_cmos_sensor(0x30f2,a_u2Data);
+	MT9P017_write_cmos_sensor(0x30f2,a_u2Data);
 	
     return 0;
 }
@@ -471,17 +471,18 @@ static struct i2c_driver MT9P017AF_i2c_driver = {
 static int MT9P017AF_i2c_detect(struct i2c_client *client, int kind, struct i2c_board_info *info);
 static int MT9P017AF_i2c_probe(struct i2c_client *client, const struct i2c_device_id *id);
 static int MT9P017AF_i2c_remove(struct i2c_client *client);
+static struct i2c_board_info __initdata kd_lens_dev={ I2C_BOARD_INFO("MT9P017AF", MT9P017AF_VCM_WRITE_ID>>1)};
 static const struct i2c_device_id MT9P017AF_i2c_id[] = {{MT9P017AF_DRVNAME,0},{}};   
-static unsigned short force[] = {IMG_SENSOR_I2C_GROUP_ID, MT9P017AF_VCM_WRITE_ID, I2C_CLIENT_END, I2C_CLIENT_END};   
-static const unsigned short * const forces[] = { force, NULL };              
-static struct i2c_client_address_data addr_data = { .forces = forces,}; 
+//static unsigned short force[] = {IMG_SENSOR_I2C_GROUP_ID, MT9P017AF_VCM_WRITE_ID, I2C_CLIENT_END, I2C_CLIENT_END};   
+//static const unsigned short * const forces[] = { force, NULL };              
+//static struct i2c_client_address_data addr_data = { .forces = forces,}; 
 struct i2c_driver MT9P017AF_i2c_driver = {                       
     .probe = MT9P017AF_i2c_probe,                                   
     .remove = MT9P017AF_i2c_remove,                           
     .detect = MT9P017AF_i2c_detect,                           
     .driver.name = MT9P017AF_DRVNAME,                 
     .id_table = MT9P017AF_i2c_id,                             
-    .address_data = &addr_data,                        
+//    .address_data = &addr_data,                        
 };  
 
 static int MT9P017AF_i2c_detect(struct i2c_client *client, int kind, struct i2c_board_info *info) {         
@@ -631,6 +632,8 @@ static struct platform_driver g_stMT9P017AF_Driver = {
 
 static int __init MT9P017AF_i2C_init(void)
 {
+    i2c_register_board_info(IMG_SENSOR_I2C_GROUP_ID, &kd_lens_dev, 1);
+
     if(platform_driver_register(&g_stMT9P017AF_Driver)){
         MT9P017AFDB("failed to register MT9P017AF driver\n");
         return -ENODEV;
