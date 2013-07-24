@@ -112,6 +112,7 @@
 #endif
 
 #include <linux/musb/musb_core.h>
+#include <linux/musb/musb_host.h>
 
 volatile bool usb_is_host = false;
 unsigned musb_debug = 0;
