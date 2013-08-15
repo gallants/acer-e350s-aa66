@@ -1,3 +1,38 @@
+/* Copyright Statement:
+ *
+ * This software/firmware and related documentation ("MediaTek Software") are
+ * protected under relevant copyright laws. The information contained herein
+ * is confidential and proprietary to MediaTek Inc. and/or its licensors.
+ * Without the prior written permission of MediaTek inc. and/or its licensors,
+ * any reproduction, modification, use or disclosure of MediaTek Software,
+ * and information contained herein, in whole or in part, shall be strictly prohibited.
+ */
+/* MediaTek Inc. (C) 2010. All rights reserved.
+ *
+ * BY OPENING THIS FILE, RECEIVER HEREBY UNEQUIVOCALLY ACKNOWLEDGES AND AGREES
+ * THAT THE SOFTWARE/FIRMWARE AND ITS DOCUMENTATIONS ("MEDIATEK SOFTWARE")
+ * RECEIVED FROM MEDIATEK AND/OR ITS REPRESENTATIVES ARE PROVIDED TO RECEIVER ON
+ * AN "AS-IS" BASIS ONLY. MEDIATEK EXPRESSLY DISCLAIMS ANY AND ALL WARRANTIES,
+ * EXPRESS OR IMPLIED, INCLUDING BUT NOT LIMITED TO THE IMPLIED WARRANTIES OF
+ * MERCHANTABILITY, FITNESS FOR A PARTICULAR PURPOSE OR NONINFRINGEMENT.
+ * NEITHER DOES MEDIATEK PROVIDE ANY WARRANTY WHATSOEVER WITH RESPECT TO THE
+ * SOFTWARE OF ANY THIRD PARTY WHICH MAY BE USED BY, INCORPORATED IN, OR
+ * SUPPLIED WITH THE MEDIATEK SOFTWARE, AND RECEIVER AGREES TO LOOK ONLY TO SUCH
+ * THIRD PARTY FOR ANY WARRANTY CLAIM RELATING THERETO. RECEIVER EXPRESSLY ACKNOWLEDGES
+ * THAT IT IS RECEIVER'S SOLE RESPONSIBILITY TO OBTAIN FROM ANY THIRD PARTY ALL PROPER LICENSES
+ * CONTAINED IN MEDIATEK SOFTWARE. MEDIATEK SHALL ALSO NOT BE RESPONSIBLE FOR ANY MEDIATEK
+ * SOFTWARE RELEASES MADE TO RECEIVER'S SPECIFICATION OR TO CONFORM TO A PARTICULAR
+ * STANDARD OR OPEN FORUM. RECEIVER'S SOLE AND EXCLUSIVE REMEDY AND MEDIATEK'S ENTIRE AND
+ * CUMULATIVE LIABILITY WITH RESPECT TO THE MEDIATEK SOFTWARE RELEASED HEREUNDER WILL BE,
+ * AT MEDIATEK'S OPTION, TO REVISE OR REPLACE THE MEDIATEK SOFTWARE AT ISSUE,
+ * OR REFUND ANY SOFTWARE LICENSE FEES OR SERVICE CHARGE PAID BY RECEIVER TO
+ * MEDIATEK FOR SUCH MEDIATEK SOFTWARE AT ISSUE.
+ *
+ * The following software/firmware and/or related documentation ("MediaTek Software")
+ * have been modified by MediaTek Inc. All revisions are subject to any receiver's
+ * applicable license agreements with MediaTek Inc.
+ */
+
 /*
  * MD218A voice coil motor driver
  *
@@ -21,7 +56,7 @@
 
 
 #define DRV201AF_DRVNAME "DRV201AF"
-#define DRV201AF_VCM_WRITE_ID           0x18 //0x1C
+#define DRV201AF_VCM_WRITE_ID           0x18
 
 #define DRV201AF_DEBUG
 #ifdef DRV201AF_DEBUG
@@ -63,32 +98,49 @@ extern s32 mt_set_gpio_mode(u32 u4Pin, u32 u4Mode);
 extern s32 mt_set_gpio_out(u32 u4Pin, u32 u4PinOut);
 extern s32 mt_set_gpio_dir(u32 u4Pin, u32 u4Dir);
 
-extern int iReadRegI2C(u8 *a_pSendData , u16 a_sizeSendData, u8 * a_pRecvData, u16 a_sizeRecvData, u16 i2cId);
-extern int iWriteRegI2C(u8 *a_pSendData , u16 a_sizeSendData, u16 i2cId);
 
 static int s4DRV201AF_ReadReg(unsigned short * a_pu2Result)
 {
-	u8 get_byte[2]= {0};
-    char puSendCmd[2] = {0x03 , 0x0 }; // current control register is 0x03(L) and 0x04(H)
-    
-    DRV201AFDB("s4DRV201AF_ReadReg ! \n");
-	iReadRegI2C(puSendCmd , 1, get_byte, 2, DRV201AF_VCM_WRITE_ID);
-    *a_pu2Result = ((get_byte[0]&0x03)<<8)|(get_byte[1]);
+    int  i4RetValue = 0;
+    char pBuff[2];
+
+    i4RetValue = i2c_master_recv(g_pstDRV201AF_I2Cclient, pBuff , 2);
+
+    if (i4RetValue < 0) 
+    {
+        DRV201AFDB("[DRV201AF] I2C read failed!! \n");
+        return -1;
+    }
+
+    *a_pu2Result = (((u16)pBuff[0]) << 4) + (pBuff[1] >> 4);
 
     return 0;
 }
 
 static int s4DRV201AF_WriteReg(u16 a_u2Data)
 {
-	char puSendCmd[3] = {0x03, (char)((a_u2Data >> 8) & 0x03), (char)(a_u2Data & 0xFF)};
+    int  i4RetValue = 0;
+/*
+#if defined(ACER_C8)||defined(SIMCOM_I6000)
+#else
+    char puSendCmd[2] = {(char)(a_u2Data >> 4) , (char)(((a_u2Data & 0xF) << 4)+0xF)};
+#endif
+*/
+	/*driver ic is BU6424*/
+    char puSendCmd[2] = {(char)(((a_u2Data >> 8) & 0x03) | 0xC0), (char)(a_u2Data & 0xFF)};
+
+	//mt_set_gpio_out(97,1);
+    i4RetValue = i2c_master_send(g_pstDRV201AF_I2Cclient, puSendCmd, 2);
+	//mt_set_gpio_out(97,0);
 	
-	DRV201AFDB("s4DRV201AF_WriteReg ! \n");
-	iWriteRegI2C(puSendCmd , 3, DRV201AF_VCM_WRITE_ID);
-	
+    if (i4RetValue < 0) 
+    {
+        DRV201AFDB("[DRV201AF] I2C send failed!! \n");
+        return -1;
+    }
+
     return 0;
 }
-
-
 
 inline static int getDRV201AFInfo(__user stDRV201AF_MotorInfo * pstMotorInfo)
 {
@@ -219,22 +271,18 @@ unsigned long a_u4Param)
     switch(a_u4Command)
     {
         case DRV201AFIOC_G_MOTORINFO :
-			DRV201AFDB("[DRV201AF_Ioctl] DRV201AFIOC_G_MOTORINFO \n");
             i4RetValue = getDRV201AFInfo((__user stDRV201AF_MotorInfo *)(a_u4Param));
         break;
 
         case DRV201AFIOC_T_MOVETO :
-			DRV201AFDB("[DRV201AF_Ioctl] DRV201AFIOC_T_MOVETO \n");
             i4RetValue = moveDRV201AF(a_u4Param);
         break;
  
  		case DRV201AFIOC_T_SETINFPOS :
-			DRV201AFDB("[DRV201AF_Ioctl] DRV201AFIOC_T_SETINFPOS \n");
 			 i4RetValue = setDRV201AFInf(a_u4Param);
 		break;
 
  		case DRV201AFIOC_T_SETMACROPOS :
-			DRV201AFDB("[DRV201AF_Ioctl] DRV201AFIOC_T_SETMACROPOS \n");
 			 i4RetValue = setDRV201AFMacro(a_u4Param);
 		break;
 		
@@ -290,9 +338,6 @@ static void DRV201AF_ISR(UINT16 a_input)
 //CAM_RESET
 static int DRV201AF_Open(struct inode * a_pstInode, struct file * a_pstFile)
 {
-	char pwm_linear[2] = {0x06, 0x02};
-	iWriteRegI2C(pwm_linear , 2, DRV201AF_VCM_WRITE_ID);
-	
     spin_lock(&g_DRV201AF_SpinLock);
 
     if(g_s4DRV201AF_Opened)
@@ -453,27 +498,27 @@ static struct i2c_driver DRV201AF_i2c_driver = {
 };*/
 
 /* Kirby: add new-style driver { */
-static int DRV201AF_i2c_detect(struct i2c_client *client, int kind, struct i2c_board_info *info);
+//static int DRV201AF_i2c_detect(struct i2c_client *client, int kind, struct i2c_board_info *info);
 static int DRV201AF_i2c_probe(struct i2c_client *client, const struct i2c_device_id *id);
 static int DRV201AF_i2c_remove(struct i2c_client *client);
-static struct i2c_board_info __initdata kd_lens_dev={ I2C_BOARD_INFO("DRV201AF", DRV201AF_VCM_WRITE_ID>>1)};
 static const struct i2c_device_id DRV201AF_i2c_id[] = {{DRV201AF_DRVNAME,0},{}};   
+static struct i2c_board_info __initdata kd_lens_dev={ I2C_BOARD_INFO("DRV201AF", 0x18)};
 //static unsigned short force[] = {IMG_SENSOR_I2C_GROUP_ID, DRV201AF_VCM_WRITE_ID, I2C_CLIENT_END, I2C_CLIENT_END};   
 //static const unsigned short * const forces[] = { force, NULL };              
 //static struct i2c_client_address_data addr_data = { .forces = forces,}; 
 struct i2c_driver DRV201AF_i2c_driver = {                       
     .probe = DRV201AF_i2c_probe,                                   
     .remove = DRV201AF_i2c_remove,                           
-    .detect = DRV201AF_i2c_detect,                           
     .driver.name = DRV201AF_DRVNAME,                 
     .id_table = DRV201AF_i2c_id,                             
-    //.address_data = &addr_data,                        
 };  
 
+#if 0 
 static int DRV201AF_i2c_detect(struct i2c_client *client, int kind, struct i2c_board_info *info) {         
     strcpy(info->type, DRV201AF_DRVNAME);                                                         
     return 0;                                                                                       
-}                                                                                                  
+}      
+#endif 
 static int DRV201AF_i2c_remove(struct i2c_client *client) {
     return 0;
 }
@@ -518,6 +563,9 @@ static int DRV201AF_i2c_probe(struct i2c_client *client, const struct i2c_device
     */
     /* Kirby: add new-style driver { */
     g_pstDRV201AF_I2Cclient = client;
+    
+    g_pstDRV201AF_I2Cclient->addr = g_pstDRV201AF_I2Cclient->addr >> 1;
+    
     /* Kirby: } */
 
     //Register char driver
@@ -617,8 +665,7 @@ static struct platform_driver g_stDRV201AF_Driver = {
 
 static int __init DRV201AF_i2C_init(void)
 {
-	i2c_register_board_info(IMG_SENSOR_I2C_GROUP_ID, &kd_lens_dev, 1);
-	
+    i2c_register_board_info(IMG_SENSOR_I2C_GROUP_ID, &kd_lens_dev, 1);
     if(platform_driver_register(&g_stDRV201AF_Driver)){
         DRV201AFDB("failed to register DRV201AF driver\n");
         return -ENODEV;
@@ -638,3 +685,5 @@ module_exit(DRV201AF_i2C_exit);
 MODULE_DESCRIPTION("DRV201AF lens module driver");
 MODULE_AUTHOR("Gipi Lin <Gipi.Lin@Mediatek.com>");
 MODULE_LICENSE("GPL");
+
+

@@ -242,7 +242,7 @@ int iWriteReg(u16 a_u2Addr , u32 a_u4Data , u32 a_u4Bytes , u16 i2cId)
     do {
     i4RetValue = i2c_master_send(g_pstI2Cclient, puSendCmd, (a_u4Bytes + 2));
         if (i4RetValue != (a_u4Bytes + 2)) {
-        PK_DBG("[CAMERA SENSOR] I2C send failed addr = 0x%x, data = 0x%x !! \n", a_u2Addr, a_u4Data);
+        PK_DBG("[CAMERA SENSOR] I2C send failed addr = 0x%x, data = 0x%x, i2cId = 0x%x !! \n", a_u2Addr, a_u4Data, i2cId);
         }
         else {
             break; 
@@ -349,7 +349,7 @@ int iWriteRegI2C(u8 *a_pSendData , u16 a_sizeSendData, u16 i2cId)
     do {
         i4RetValue = i2c_master_send(g_pstI2Cclient, a_pSendData, a_sizeSendData);
         if (i4RetValue != a_sizeSendData) {
-            PK_DBG("[CAMERA SENSOR] I2C send failed!!, Addr = 0x%x, Data = 0x%x \n", a_pSendData[0], a_pSendData[1] );
+            PK_DBG("[CAMERA SENSOR] I2C send failed!!, Addr = 0x%x, Data = 0x%x, i2cId = 0x%x \n", a_pSendData[0], a_pSendData[1], i2cId );
         }
         else {
             break; 

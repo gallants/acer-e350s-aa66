@@ -7,7 +7,7 @@ include $(CLEAR_VARS)
 
 # force libcameracustom.so to re-build, due to change sensor will not 
 # change any source code. 
-#$(shell touch $(TOP)/$(MTK_PATH_SOURCE)/external/mhal/src/custom/common/hal/imgsensor/$(MTK_PROJECT)/sensorlist.cpp)
+$(shell touch $(TOP)/$(MTK_PATH_SOURCE)/external/mhal/src/custom/common/hal/imgsensor/$(MTK_PROJECT)/sensorlist.cpp)
 
 $(call config-custom-folder,common: inc:hal/inc)
 
