@@ -44,6 +44,7 @@
 ***************************************************/
 #define HW_RESV (0xF1019100)
 
+#define OC_6577 true
 /**************************************************
 * enable this option to do DVFS random test
 ***************************************************/
@@ -223,6 +224,9 @@ static struct mtk_cpu_freq_info mt6577_freqs_e1_1_0[] = {
     OP(DVFS_F3_MT6577_E1_1_0),
     OP(DVFS_F2_MT6577_E1_1_0),
     OP(DVFS_F1_MT6577_E1_1_0),
+#ifdef OC_6577
+    OP(DVFS_F1_MT6577_E1_1_2),	// overclock!!
+#endif
 };
 
 /***************************
@@ -301,8 +305,40 @@ static unsigned int mtk_cpufreq_get(unsigned int cpu)
 ************************************************************/
 static void mtk_cpufreq_set(unsigned int freq_old, unsigned int freq_new)
 {
+
     if (freq_new == DVFS_F1) /* change ARMPLL to 1.2G mode */
     {
+        #ifdef OC_6577
+        if (freq_new > freq_old)
+        {
+            #ifdef MTK_BUCK_ADJUST
+            DRV_WriteReg32(SC_AP_DVFS_CON, ((DRV_Reg32(SC_AP_DVFS_CON) & 0xFFFFFFFC) | 0x03));
+
+            mb();
+            udelay(PMIC_SETTLE_TIME);
+            #endif
+
+            DRV_WriteReg32(TOP_CKDIV1, 0x00);
+        }
+        else
+        {
+            DRV_WriteReg32(TOP_CKMUXSEL, (DRV_Reg32(TOP_CKMUXSEL) & 0x0FF3));
+
+            DRV_WriteReg32(ARMPLL_CON0, 0x4CA0);
+            udelay(PMIC_SETTLE_TIME);
+
+            DRV_WriteReg32(TOP_CKMUXSEL, (DRV_Reg32(TOP_CKMUXSEL) | 0x0008));
+            mb();
+
+            #ifdef MTK_BUCK_ADJUST
+            DRV_WriteReg32(SC_AP_DVFS_CON, ((DRV_Reg32(SC_AP_DVFS_CON) & 0xFFFFFFFC) | 0x03));
+            #endif
+        }
+
+        g_cur_freq = freq_new;
+
+        #else	/* OC_6577 */
+
         #ifdef MTK_BUCK_ADJUST
         DRV_WriteReg32(SC_AP_DVFS_CON, ((DRV_Reg32(SC_AP_DVFS_CON) & 0xFFFFFFFC) | 0x00));
 
@@ -319,6 +355,7 @@ static void mtk_cpufreq_set(unsigned int freq_old, unsigned int freq_new)
         DRV_WriteReg32(TOP_CKMUXSEL, (DRV_Reg32(TOP_CKMUXSEL) | 0x0008));
 
         g_cur_freq = freq_new;
+        #endif
     }
     else if (freq_new == DVFS_F2) /* change ARMPLL to 1.0G mode */
     {
@@ -700,7 +737,11 @@ static int mtk_cpufreq_target(struct cpufreq_policy *policy, unsigned int target
 
     if (g_is_sreen_off)
     {
+        #ifdef OC_6577
+        freqs.new = policy->max;
+        #else
         freqs.new = DVFS_F2;
+        #endif
     }
 
     if (freqs.new > g_limited_freq)
@@ -711,15 +752,19 @@ static int mtk_cpufreq_target(struct cpufreq_policy *policy, unsigned int target
 
     if (get_chip_ver() >= CHIP_6577_E1)
     {
+        #ifndef OC_6577
         if (freqs.new > DVFS_F2 && num_online_cpus() == 1)
             freqs.new = DVFS_F2;
+        #endif
 
         if (cpufreq_gov_dbs_get_sum_load() < cpufreq_turbo_threshold)
         {
             cpufreq_turbo_count = 0;
 
+        #ifndef OC_6577
             if (freqs.new > DVFS_F2)
                 freqs.new = DVFS_F2;
+        #endif
         }
         else
         {
@@ -728,7 +773,9 @@ static int mtk_cpufreq_target(struct cpufreq_policy *policy, unsigned int target
                 if (freqs.new > DVFS_F2)
                 {
                     cpufreq_turbo_count++;
+        #ifndef OC_6577
                     freqs.new = DVFS_F2;
+        #endif
                 }
                 else
                 {
@@ -837,10 +884,17 @@ static int mtk_cpufreq_init(struct cpufreq_policy *policy)
                 else
                 {
                     policy->cpuinfo.min_freq = DVFS_F6_MT6577_E1_1_0;
-                    policy->cpuinfo.max_freq = DVFS_F1_MT6577_E1_1_0;
 
+                    #ifdef OC_6577
+                    policy->cpuinfo.max_freq = DVFS_F1_MT6577_E1_1_2;
+                    policy->cur = DVFS_F1_MT6577_E1_1_2;
+                    policy->max = DVFS_F1_MT6577_E1_1_2;
+                    #else
+                    policy->cpuinfo.max_freq = DVFS_F1_MT6577_E1_1_0;
                     policy->cur = DVFS_F1_MT6577_E1_1_0;
                     policy->max = DVFS_F1_MT6577_E1_1_0;
+                    #endif
+
                     policy->min = DVFS_F6_MT6577_E1_1_0;
                     ret = setup_freqs_table(policy, ARRAY_AND_SIZE(mt6577_freqs_e1_1_0));
                 }
@@ -848,10 +902,17 @@ static int mtk_cpufreq_init(struct cpufreq_policy *policy)
             else
             {
                 policy->cpuinfo.min_freq = DVFS_F6_MT6577_E1_1_0;
-                policy->cpuinfo.max_freq = DVFS_F1_MT6577_E1_1_0;
 
+                #ifdef OC_6577
+                policy->cpuinfo.max_freq = DVFS_F1_MT6577_E1_1_2;
+                policy->cur = DVFS_F1_MT6577_E1_1_2;
+                policy->max = DVFS_F1_MT6577_E1_1_2;
+                #else
+                policy->cpuinfo.max_freq = DVFS_F1_MT6577_E1_1_0;
                 policy->cur = DVFS_F1_MT6577_E1_1_0;
                 policy->max = DVFS_F1_MT6577_E1_1_0;
+                #endif
+
                 policy->min = DVFS_F6_MT6577_E1_1_0;
                 ret = setup_freqs_table(policy, ARRAY_AND_SIZE(mt6577_freqs_e1_1_0));
             }
@@ -914,7 +975,11 @@ void mtk_cpufreq_early_suspend(struct early_suspend *h)
         g_limited_min_freq = DVFS_F7;
 
     cpufreq_state_set(0);
+    #ifdef OC_6577
+    cpufreq_driver_target(policy, DVFS_F1, CPUFREQ_RELATION_L);
+    #else
     cpufreq_driver_target(policy, DVFS_F2, CPUFREQ_RELATION_L);
+    #endif
 
     mt6329_read_byte(0x47, &g_dvs_volt);
 
@@ -986,6 +1051,9 @@ void cpufreq_thermal_protect(unsigned int limited_opp)
                 g_limited_freq = DVFS_F2;
             }
         }
+        #ifdef OC_6577
+            g_limited_freq = DVFS_F1;
+        #endif
     }
     else if (limited_opp == DVFS_OPP1)
     {
@@ -1263,14 +1331,23 @@ static int cpufreq_pdrv_probe(struct platform_device *pdev)
                 else
                 {
                     g_cur_freq = DVFS_F1_MT6577_E1_1_0;
+                    #ifdef OC_6577
+                    g_limited_freq = DVFS_F1_MT6577_E1_1_2;
+                    #else
                     g_limited_freq = DVFS_F1_MT6577_E1_1_0;
+                    #endif
+                    
                     g_limited_min_freq = DVFS_F6_MT6577_E1_1_0;
                 }
             }
             else
             {
                 g_cur_freq = DVFS_F1_MT6577_E1_1_0;
+                #ifdef OC_6577
+                g_limited_freq = DVFS_F1_MT6577_E1_1_2;
+                #else
                 g_limited_freq = DVFS_F1_MT6577_E1_1_0;
+                #endif
                 g_limited_min_freq = DVFS_F6_MT6577_E1_1_0;
             }
         }
