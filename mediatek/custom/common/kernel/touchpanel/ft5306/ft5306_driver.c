@@ -168,7 +168,7 @@ char unknown_info[] = "Unknow TP";
 #endif
 
 //////////////////////////////////////////////////////////////////////////////////
-//#define VELOCITY_CUSTOM_FT5206
+#define VELOCITY_CUSTOM_FT5206
 #ifdef VELOCITY_CUSTOM_FT5206
 #include <linux/device.h>
 #include <linux/miscdevice.h>
