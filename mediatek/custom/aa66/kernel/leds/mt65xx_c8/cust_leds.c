@@ -62,8 +62,17 @@ unsigned int brightness_mapping(unsigned int level)
     mapped_level = level/4;
 #endif
 */       
-    mapped_level = level/4;
-	return mapped_level;
+//    mapped_level = level/4;
+
+    if(level >= 200 ) { // 58 - 64
+       mapped_level = 60 + (level - 200) * (64 - 60) / (256 - 200);
+    }    else if(level >= 175 ) { // 23 - 57
+       mapped_level = 24 + (level - 175) * (60 - 24) / (200 - 175);
+    } else {  // 4 - 23
+       mapped_level = 4 + level * (24 - 4) / 175;
+    } 
+
+    return mapped_level;
 }
 
 unsigned int Cust_SetBacklight(int level, int div)

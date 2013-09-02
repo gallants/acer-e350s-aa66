@@ -1200,8 +1200,8 @@ unsigned long a_u4Param)
     kfree(pBuff);
 CAMERA_HW_Ioctl_EXIT:
     mutex_unlock(&kdCam_Mutex);             
-//    return i4RetValue;
-    return 0;	// force kd_camera enabled!!
+    return i4RetValue;
+//    return 0;	// force kd_camera enabled!!
 }
 
 /*******************************************************************************

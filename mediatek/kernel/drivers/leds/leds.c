@@ -976,7 +976,6 @@ static void mt65xx_led_set(struct led_classdev *led_cdev, enum led_brightness le
 {
 	struct mt65xx_led_data *led_data =
 		container_of(led_cdev, struct mt65xx_led_data, cdev);
-
 	// do something only when level is changed
 	if (led_data->level != level) {
 		led_data->level = level;
